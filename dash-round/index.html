@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DASH_ROUND</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="viewport-wrap" id="viewportWrap">
+    <div class="stage-scaler" id="stageScaler">
+      <div class="fade-top"></div>
+      <div class="fade-bottom"></div>
+
+      <!-- Status Card -->
+      <div class="status-card" id="statusCard">
+        <div class="status-left">
+          <div class="device-name">DASH_ROUND</div>
+          <div class="status-row">
+            <div class="status-dot" id="statusDot"></div>
+            <div class="status-text" id="statusText">Не подключено</div>
+          </div>
+        </div>
+        <div class="bt-btn" id="btBtn" onclick="toggleConnect()" title="Подключить / отключить Bluetooth">
+          <svg class="bt-icon" viewBox="0 0 21 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1.5 10.2083L18.9167 27.625L10.2083 36.3333V1.5L18.9167 10.2083L1.5 27.625" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke="#2C2C2C"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Scrollable middle area -->
+      <div class="phone" id="phoneScroll">
+        <div id="mainContent" class="locked-section">
+          <!-- Companion Mode -->
+          <div id="viewCompanion">
+            <div class="section-title top-gap-29">РЕЖИМ КОМПАНЬОН</div>
+
+            <div class="comp-cards">
+              <div class="comp-card inactive" id="interaction-card">
+                <div class="toggle off" id="interaction-toggle">
+                  <div class="toggle-knob"></div>
+                </div>
+                <div>
+                  <div class="comp-title">ВЗАИМОДЕЙСТВИЕ</div>
+                  <div class="comp-desc">Реакция на движение и тряску</div>
+                </div>
+              </div>
+
+              <div class="comp-card inactive" id="emotion-card">
+                <div class="toggle off" id="emotion-toggle">
+                  <div class="toggle-knob"></div>
+                </div>
+                <div>
+                  <div class="comp-title">ЭМОЦИИ</div>
+                  <div class="comp-desc">Настройка и запуск эмоций</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interaction buttons -->
+            <div class="emotion-btns" id="interaction-btns" style="display: none;">
+              <div class="emotion-btn" data-cmd="SHAKE:TEST">ВСПЫЛЬЧИВОСТЬ</div>
+              <div class="emotion-btn" data-cmd="SHAKE:TEST">АГРЕССИЯ</div>
+              <div class="emotion-btn" data-cmd="SHAKE:TEST">ТРЕВОГА</div>
+            </div>
+
+            <!-- Emotion buttons -->
+            <div class="emotion-btns" id="emotion-btns" style="display: none;">
+              <div class="emotion-btn" data-cmd="EMO:SLEEP">СОН</div>
+              <div class="emotion-btn" data-cmd="EMO:AWAKE">ОТКРЫТЫЕ ГЛАЗА</div>
+            </div>
+
+            <!-- Сохранённые статичные эмоции -->
+            <div class="legacy-emotions-wrap" id="legacyEmotionsWrap">
+              <div class="section-title" style="margin-top: 18px;">ПРОВЕРКА ГЛАЗ (СТАТИКА)</div>
+              <div class="legacy-emotions-grid">
+                <div class="legacy-emotion-btn" onclick="triggerLegacyEmotion('EMO:WAKE', this)">👀 Загрузка</div>
+                <div class="legacy-emotion-btn" onclick="triggerLegacyEmotion('EMO:SLEEP', this)">💤 Сон</div>
+                <div class="legacy-emotion-btn" onclick="triggerLegacyEmotion('EMO:DIZZY', this)">🌀 Головокружение</div>
+                <div class="legacy-emotion-btn" onclick="triggerLegacyEmotion('EMO:ANGRY', this)">💢 Возмущение</div>
+                <div class="legacy-emotion-btn" onclick="triggerLegacyEmotion('EMO:AWAKE', this)">👁️ Открытые глаза</div>
+                <div class="legacy-emotion-btn" onclick="triggerLegacyEmotion('SHAKE:TEST', this)">📳 Тест тряски</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Control Mode -->
+          <div id="viewControl" style="display: none;">
+            <div class="section-title top-gap-29">РЕЖИМ УПРАВЛЕНИЯ</div>
+
+            <div class="control-btns">
+              <div class="control-btn flashlight" id="btnFlash" onclick="toggleControlAction('FLASH', 'btnFlash', 'click')">ФОНАРИК</div>
+              <div class="control-btn hazard" id="btnHazard" onclick="toggleControlAction('HAZARD', 'btnHazard', 'hazard')">АВАРИЙКА</div>
+              <div class="control-row">
+                <div class="control-btn left" id="btnLeft" onclick="toggleTurnAction('LEFT', 'btnLeft')">ЛЕВЫЙ</div>
+                <div class="control-btn right" id="btnRight" onclick="toggleTurnAction('RIGHT', 'btnRight')">ПРАВЫЙ</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Test Mode -->
+          <div id="viewTest" style="display: none;">
+            <div class="section-title top-gap-29">РЕЖИМ ТЕСТА И ОШИБОК</div>
+
+            <div class="test-indication">
+              <div class="test-indication-title">Индикация заряда в ожидании</div>
+              <div class="indication-btns">
+                <div class="indication-btn high" onclick="setBootPreset(100, this)">Высокий</div>
+                <div class="indication-btn mid" onclick="setBootPreset(50, this)">Средний</div>
+                <div class="indication-btn low active" onclick="setBootPreset(20, this)">Низкий</div>
+              </div>
+            </div>
+
+            <div class="battery-charge-block">
+              <div class="battery-charge-header">
+                <span>Заряд батареи</span>
+                <span class="battery-charge-value">0</span>
+              </div>
+              <div class="battery-slider" id="batterySlider">
+                <div class="battery-slider-track"></div>
+                <div class="battery-slider-fill" style="width: 0%;"></div>
+                <div class="battery-slider-thumb" style="left: 0px;"></div>
+              </div>
+            </div>
+
+            <div class="brightness-block">
+              <div class="battery-charge-header">
+                <span>Уровень яркости</span>
+                <span class="brightness-value">255</span>
+              </div>
+              <div class="brightness-slider" id="brightnessSlider">
+                <div class="brightness-slider-track"></div>
+                <div class="brightness-slider-fill" style="width: 100%;"></div>
+                <div class="brightness-slider-thumb" style="left: 0px;"></div>
+              </div>
+            </div>
+
+            <div class="errors-block">
+              <div class="errors-title">Ошибки</div>
+              <div class="errors-grid">
+                <div class="error-btn" data-err="ERR:E1" onclick="toggleErrorCode('ERR:E1', this)">E1 / MPU OFFLINE</div>
+                <div class="error-btn" data-err="ERR:EB" onclick="toggleErrorCode('ERR:EB', this)">EB / VOLTAGE DROP</div>
+                <div class="error-btn" data-err="ERR:EC" onclick="toggleErrorCode('ERR:EC', this)">EC / BLE LOST</div>
+                <div class="error-btn" data-err="ERR:E3" onclick="toggleErrorCode('ERR:E3', this)">E3 / SCREEN FAIL</div>
+              </div>
+              <div class="error-reset" onclick="clearErrorsCode()">СБРОС ОШИБОК</div>
+            </div>
+
+            <div class="console-block">
+              <div class="console-title">Консоль отладки</div>
+              <div class="console-output" id="consoleBox">
+                <div class="console-muted">[System] Интерфейс готов. Ожидание BLE...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Work Mode -->
+      <div class="section-title work-title">РЕЖИМ РАБОТЫ</div>
+
+      <div class="work-btns">
+        <div class="work-btn" data-mode="BOOT" onclick="switchWorkMode('BOOT', this)">Ожидание</div>
+        <div class="work-btn" data-mode="RUN" onclick="switchWorkMode('RUN', this)">Запуск</div>
+        <div class="work-btn" data-mode="TEST" onclick="switchWorkMode('TEST', this)">Тест</div>
+      </div>
+
+      <!-- Battery & Power -->
+      <div class="battery-bar">
+        <div class="battery-fill" id="mainBatteryFill">
+          <svg class="bolt" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M23.3543 14.5449C23.248 14.1199 22.823 13.8012 22.398 13.8012H16.023L20.1668 1.36992C20.273 0.944923 20.1668 0.413673 19.7418 0.201173C19.3168 -0.117577 18.8918 -0.0113272 18.4668 0.201173L0.404288 14.0137C0.0855379 14.3324 -0.126962 14.7574 0.0855378 15.1824C0.298038 15.6074 0.723038 15.9262 1.14804 15.9262H7.52304L3.37929 28.3574C3.27304 28.7824 3.37929 29.3137 3.80429 29.5262C3.91054 29.6324 4.12304 29.7387 4.33554 29.7387C4.54804 29.7387 4.76054 29.6324 4.97304 29.5262L23.0355 15.7137C23.3543 15.3949 23.5668 14.9699 23.3543 14.5449Z" fill="#373737"/>
+          </svg>
+          <div class="percent" id="mainPercent">0</div>
+          <div class="battery-segments">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="power-btn" id="power-btn" onclick="togglePower()">
+          <div class="power-knob off" id="powerKnob"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
