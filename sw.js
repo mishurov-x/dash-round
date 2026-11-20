@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dash-round-v3';
+const CACHE_NAME = 'dash-round-v4';
 const ASSETS = [
   './',
   './index.html',

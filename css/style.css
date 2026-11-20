@@ -75,7 +75,7 @@ html, body {
   height: 100%;
   background: #1C1C1C;
   position: relative;
-  padding: 48px 20px 270px;
+  padding: 33px 20px 270px;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
@@ -91,7 +91,7 @@ html, body {
   left: 0;
   top: 0;
   width: 440px;
-  height: 163px;
+  height: 148px;
   background: linear-gradient(to bottom, #1C1C1C 72%, rgba(28, 28, 28, 0.8) 88%, transparent 100%);
   z-index: 15;
   pointer-events: none;
@@ -119,7 +119,7 @@ html, body {
   padding: 0 20px;
   justify-content: space-between;
   position: absolute;
-  top: 48px;
+  top: 33px;
   left: 20px;
   z-index: 25;
 }
