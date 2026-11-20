@@ -500,7 +500,7 @@ function clearErrorsCode() {
     clearTimeout(resetTimer);
     resetTimer = setTimeout(() => {
       resetBtn.classList.remove('active');
-    }, 800);
+    }, 180);
   }
 
   sendControl('ERR:CLEAR');
