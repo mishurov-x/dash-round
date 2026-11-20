@@ -33,6 +33,7 @@ let emotionOn = false;
 let batteryCharge = 0;
 let brightness = 255;
 let soundEnabled = true;
+let resetTimer = null;
 
 const interactionToggle = document.getElementById('interaction-toggle');
 const emotionToggle = document.getElementById('emotion-toggle');
@@ -474,6 +475,9 @@ brightnessSlider.addEventListener('pointerup', () => {
 // Errors
 function toggleErrorCode(errCmd, btnEl) {
   if (!deviceOn) return;
+  const resetBtn = document.querySelector('.error-reset');
+  if (resetBtn) resetBtn.classList.remove('active');
+
   const wasActive = btnEl.classList.contains('active');
   document.querySelectorAll('.error-btn').forEach(b => b.classList.remove('active'));
   if (!wasActive) {
@@ -489,7 +493,18 @@ function toggleErrorCode(errCmd, btnEl) {
 function clearErrorsCode() {
   if (!deviceOn) return;
   document.querySelectorAll('.error-btn').forEach(b => b.classList.remove('active'));
+
+  const resetBtn = document.querySelector('.error-reset');
+  if (resetBtn) {
+    resetBtn.classList.add('active');
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => {
+      resetBtn.classList.remove('active');
+    }, 800);
+  }
+
   sendControl('ERR:CLEAR');
+  logToConsole('Ошибки сброшены');
   playSound('click');
 }
 
